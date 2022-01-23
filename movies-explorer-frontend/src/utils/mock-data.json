@@ -1,0 +1,40 @@
+[
+    {
+        "id":1,
+        "nameRU":"33 слова о дизайне",
+        "thumbnail": "https://f.bangbangeducation.ru/course/course-cover/111/da91b00b-ea93-11e9-89b4-0242ac18000a.png",
+        "duration": "1ч 42м"
+    },
+    {
+        "id":2,
+        "nameRU":"В погоне за Бенкси",
+        "thumbnail": "https://www.themoviedb.org/t/p/w780/hkAj8l9paUcHuw8XCsjZNPuV79n.jpg",
+        "duration": "1ч 42м"
+    },
+    {
+        "id":3,
+        "nameRU":"Киноальманах «100 лет дизайна»",
+        "thumbnail": "https://f.bangbangeducation.ru/course/course-cover/65/2e87a0e8-077b-11e9-9bb1-0242ac120002.jpeg",
+        "duration": "1ч 42м"
+    },
+
+    {
+        "id":4,
+        "nameRU":"33 слова о дизайне",
+        "thumbnail": "https://f.bangbangeducation.ru/course/course-cover/111/da91b00b-ea93-11e9-89b4-0242ac18000a.png",
+        "duration": "1ч 42м"
+    },
+    {
+        "id":5,
+        "nameRU":"В погоне за Бенкси",
+        "thumbnail": "https://www.themoviedb.org/t/p/w780/hkAj8l9paUcHuw8XCsjZNPuV79n.jpg",
+        "duration": "1ч 42м"
+    },
+    {
+        "id":6,
+        "nameRU":"Киноальманах «100 лет дизайна»",
+        "thumbnail": "https://f.bangbangeducation.ru/course/course-cover/65/2e87a0e8-077b-11e9-9bb1-0242ac120002.jpeg",
+        "duration": "1ч 42м"
+    }
+]
+    
