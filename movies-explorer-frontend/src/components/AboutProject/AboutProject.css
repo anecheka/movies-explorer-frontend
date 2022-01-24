@@ -1,0 +1,210 @@
+.about-project {
+    padding: 110px 70px;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1281px) {
+    .about-project {
+        padding-left: calc((100vw - 1280px)/2);
+        padding-right: calc((100vw - 1280px)/2);
+    }
+}
+
+@media (max-width: 768px) {
+    .about-project {
+        padding: 90px 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-project {
+        padding: 70px 18px;
+    }
+}
+   
+.about-project__title {
+    margin: 0;
+    height: 51px;
+    font-size: 22px;
+    line-height: 27px;
+    font-weight: 400;
+    border-bottom: #000 1px solid;
+}
+
+@media (max-width: 480px) {
+    .about-project__title {
+        font-size: 18px;
+        line-height: 22px;
+    }
+}
+
+.about-project__description {
+    display: grid;
+    grid-template-areas: 
+        "title-stages title-timeline"
+        "copy-stages copy-timeline"
+    ;
+    padding-top: 70px;
+    column-gap: 40px;
+    row-gap: 26px;
+}
+
+@media (max-width: 768px) {
+    .about-project__description {
+        column-gap: 30px;
+        row-gap: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-project__description {
+        grid-template-areas: 
+        "title-stages"
+        "copy-stages" 
+        "title-timeline"
+        "copy-timeline"
+    ;
+        row-gap: 16px;
+        padding-top: 60px;
+    }
+}
+
+.about-project__description-title {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 400;
+}
+
+@media (max-width: 320px) {
+    .about-project__description-title {
+        font-size: 18px;
+        line-height: 22px;
+    }
+}
+
+.about-project__description-title_contents_stages {
+    grid-area: title-stages;
+}
+
+.about-project__description-title_contents_timeline {
+    grid-area: title-timeline;
+}
+
+.about-project__description-copy {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .about-project__description-copy {
+        font-size: 12px;
+        line-height: 18px;
+    }
+}
+
+@media (max-width: 320px) {
+    .about-project__description-copy {
+        font-size: 11px;
+        line-height: 16px;
+    }
+}
+
+.about-project__description-copy_contents_stages {
+    grid-area: copy-stages;
+}
+
+@media (max-width: 480px) {
+    .about-project__description-copy_contents_stages {
+        padding-bottom: 40px;
+    }
+}
+
+.about-project__description-copy_contents_timeline {
+    grid-area: copy-timeline;
+}
+
+.about-project__timeline-diagram-section {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    padding-top: 110px;
+    grid-template-areas: 
+        "one-week four-weeks"
+        "back front"
+    ;
+    column-gap: 0;
+    row-gap: 14px;
+}
+
+@media (max-width: 768px) {
+    .about-project__timeline-diagram-section {
+        padding-top: 93px;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-project__timeline-diagram-section {
+        padding-top: 60px;
+        grid-template-columns: 2fr 3fr;
+        row-gap: 10px;
+    }
+}
+.about-project__timeline-diagram {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+@media (max-width: 480px) {
+    .about-project__timeline-diagram {
+        font-size: 11px;
+        line-height: 13px;
+        padding-top: 11px;
+        padding-bottom: 11px;
+    }
+}
+
+.about-project__timeline-diagram_contents_back {
+    grid-area: one-week;
+    background-color: #000;
+    color: #FFF;
+}
+
+.about-project__timeline-diagram_contents_front {
+    grid-area: four-weeks;
+    background-color: #F2F2F2;
+    color: #000;
+}
+
+.about-project__timeline-diagram-label {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 17px;
+    color: #A0A0A0;
+    display: inline;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .about-project__timeline-diagram-label {
+        font-size: 11px;
+        line-height: 13px;
+    }
+}
+
+.about-project__timeline-diagram-label_contents_back {
+    grid-area: back;
+}
+
+.about-project__timeline-diagram-label_contents_front {
+    grid-area: front;
+}
