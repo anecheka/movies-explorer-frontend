@@ -17,8 +17,10 @@ function MoviesCard({card, isLoggedIn}) {
 
   return (
     <li className="movies-card">
-      <h1 className="movies-card__name">{card.nameRU}</h1>
-      <p className="movies-card__duration">{card.duration}</p>
+      <div>
+        <h1 className="movies-card__name">{card.nameRU}</h1>
+        <p className="movies-card__duration">{card.duration}</p>
+      </div>
       <button className={saveClassName} onClick={handleClick} />
       <img className="movies-card__thumbnail" src={card.thumbnail} alt={`Превью фильма ${card.nameRU}`}/>
     </li>
