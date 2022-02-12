@@ -1,14 +1,15 @@
 import React from 'react';
 import './TumblerMovies.css';
 
-function TumblerMovies() {
+function TumblerMovies( {tumblerOn, handleShowShortMovies, handleShowShortSavedMovies, isInAllMovies}) {
 
-  const [on, setOn] = React.useState(false);
-
-  const toggleSwitchClassName = `toggle__switch ${on ? 'toggle__switch_on' : ''}`;
+  const toggleSwitchClassName = `toggle__switch ${tumblerOn ? 'toggle__switch_on' : ''}`;
 
   function handleClick(e) {
-    on ? setOn(false) : setOn(true);
+    if (!isInAllMovies) {
+      handleShowShortSavedMovies();
+    }
+    handleShowShortMovies();
 }
 
   return (

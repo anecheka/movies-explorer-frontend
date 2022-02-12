@@ -37,6 +37,11 @@
     }
 }
 
+.movies-card__trailer {
+    text-decoration: none;
+    grid-area: thumbnail;
+}
+
 .movies-card__name {
     margin: 0;
     display: block;
@@ -123,7 +128,7 @@
 }
 
 .movies-card__thumbnail {
-    grid-area: thumbnail;
+    /* grid-area: thumbnail; */
     width: 220px;
     height: 122px;
     margin: 6px 6px 6px 0;

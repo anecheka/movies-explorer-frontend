@@ -4,7 +4,7 @@ import logo from '../../images/logo.svg';
 import './Header.css';
 import Navigation from '../Navigation/Navigation';
 
-function Header() {
+function Header({loggedIn}) {
 
   const location = useLocation();
   const locationCheck = location.pathname === '/';
@@ -12,7 +12,7 @@ function Header() {
   return (
     <header className={`header ${locationCheck ? "header__landing" : ""}`}>
         <Link to="/"><img src={logo} alt="Лого проекта Синематeка" className="header__logo" /></Link>
-        <Navigation />
+        <Navigation loggedIn={loggedIn}/>
     </header>
   );
 }
