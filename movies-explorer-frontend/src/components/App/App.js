@@ -156,7 +156,6 @@ function App() {
     if (!query) {
         return;
     }
-
     return movies.filter((result) => {
       return result.nameRU.toLowerCase().includes(query.toLowerCase())
     });
