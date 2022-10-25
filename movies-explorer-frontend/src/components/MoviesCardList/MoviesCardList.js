@@ -18,8 +18,18 @@ function MoviesCardList({
 
   const hideShowMoreButtonClassName = `movies-card-list__more-button ${searchQuery === '' || moreButtonHidden ? 'movies-card-list__more-button_hidden' : ''}`;
   const hideNoSearchQueryTitle = `movies-card-list__callout ${(searchQuery === '' && isInAllMovies) || searchResultsShown === false ? '' : 'movies-card-list__callout_hidden' }`;
-  const hideSearchList = `movies-card-list__movies ${searchQuery === '' && isInAllMovies ? 'movies-card-list__movies_hidden' : ''}`
-  const mainTitle = `${searchResultsShown && isInAllMovies ? `Введите свой запрос в строку поиска` : `Ничего не найдено`}`
+  const hideSearchList = `movies-card-list__movies ${(searchQuery === '' && isInAllMovies) || searchResultsShown === false ? 'movies-card-list__movies_hidden' : ''}`
+  // const mainTitle = `${searchResultsShown && isInAllMovies ? `Введите свой запрос в строку поиска` : `Ничего не найдено`}`
+
+  let mainTitle 
+
+  if (!searchResultsShown && isInAllMovies) {
+      mainTitle = `Введите свой запрос в строку поиска`
+  } else if (!searchResultsShown && !isInAllMovies) {
+    mainTitle = `У вас пока нет сохраненных фильмов`
+  } else {
+    mainTitle = `Ничего не найдено`
+  }
 
   return (
     <section className="movies-card-list">
@@ -27,7 +37,7 @@ function MoviesCardList({
        { searchResultsShown && 
         <ul className={hideSearchList}>
             { loading && <Preloader />}
-            { !loading && isInAllMovies && 
+            { !loading && 
               moviesData.map((card) => 
                     <MoviesCard
                         key={card.movieId} 

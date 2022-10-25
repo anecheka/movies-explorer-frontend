@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import './SearchForm.css';
 import icon from '../../images/search.svg'
 
-function SearchForm({ setSearchQuery }) {
+function SearchForm({ setSearchQuery, setSearchSavedQuery, isInAllMovies }) {
 
-  const [searchTyping, setSearchTyping] = React.useState('');
+  const [searchTyping, setSearchTyping] = useState('');
+
+  useEffect (() => {
+    setSearchTyping(savedQuery)
+  }, [setSearchQuery]);
 
   const handleSearchQuery = (e) => {
     setSearchTyping(e.target.value);
   } 
 
-  const submittedSearchQuery = () => {
-    setSearchTyping(searchTyping);
-  }
+ const savedQuery = localStorage.getItem(isInAllMovies ? "query" : "savedQuery");
 
   const handleSubmit = (e) => {
 
@@ -21,8 +23,13 @@ function SearchForm({ setSearchQuery }) {
     if (searchTyping === null) {
       setSearchQuery('')
       } else {
-        submittedSearchQuery();
-        setSearchQuery(searchTyping);
+        isInAllMovies && setSearchQuery(searchTyping);
+        !isInAllMovies && setSearchSavedQuery(searchTyping);
+        if (isInAllMovies) {
+          localStorage.setItem("query", searchTyping);
+        } else {
+          localStorage.setItem("savedQuery", searchTyping);
+        }
      }
   }
   
@@ -33,7 +40,7 @@ function SearchForm({ setSearchQuery }) {
               type="text" 
               name="search-query" 
               placeholder='Фильм'
-              value={searchTyping}
+              value={searchTyping || ''}
               onChange={handleSearchQuery}
               required />
             <button className="search-form__button"

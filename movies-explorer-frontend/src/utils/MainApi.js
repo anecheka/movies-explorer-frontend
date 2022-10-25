@@ -1,5 +1,5 @@
-export const BASE_URL = 'https://api.cinematheque.nomoredomains.work';
-// export const BASE_URL = 'http://localhost:3001';
+// export const BASE_URL = 'https://api.cinematheque.nomorepartiesxyz.ru';
+export const BASE_URL = 'http://localhost:3001';
 
 const handleResponse = response =>
     response.ok 
@@ -71,12 +71,12 @@ export const authorize = ({email, password}) => {
     return fetch(`${BASE_URL}/users/me/`, {
       mode: "cors",
       method: 'PATCH',
+      credentials: 'include',
       headers: {
         Accept: "application/json",
         'Content-Type': 'application/json',
         'Access-Control-Request-Headers': true,
       },
-      credentials: 'include',
       body: JSON.stringify({name: newName, email: newEmail}),
     })
     .then (response => {

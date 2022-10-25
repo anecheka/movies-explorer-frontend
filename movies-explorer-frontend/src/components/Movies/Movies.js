@@ -25,6 +25,7 @@ function Movies({
     <main className="movies">
         <SearchForm
           setSearchQuery={setSearchQuery}
+          isInAllMovies={isInAllMovies}
         />
         <TumblerMovies 
             tumblerOn={tumblerOn}

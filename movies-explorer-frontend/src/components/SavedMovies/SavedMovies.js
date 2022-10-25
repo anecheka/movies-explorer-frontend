@@ -6,8 +6,8 @@ import TumblerMovies from '../TumblerMovies/TumblerMovies';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 function SavedMovies({ 
-  searchQuery, 
-  setSearchQuery, 
+  searchSavedQuery,
+  setSearchSavedQuery, 
   handleShowMoreMovies, 
   moreButtonHidden, 
   searchResultsShown, 
@@ -16,37 +16,38 @@ function SavedMovies({
   handleShowShortMovies, 
   onSaveMovie, 
   isInAllMovies, 
-  moviesData, 
+  moviesData,
+  savedMoviesData,
   onDeleteMovie, 
   handleShowShortSavedMovies,
   }) {
 
-  const currentUser = useContext(CurrentUserContext);
+  // const currentUser = useContext(CurrentUserContext);
 
-  const history = useHistory();
-  const [savedMoviesData, setSavedMoviesData] = useState([]);
+  // const history = useHistory();
+  // const [userMoviesData, setUserMoviesData] = useState([]);
 
-  const getUserSavedMovies = (movies) => {
-    let userMovies
-    userMovies = movies.filter((movie) => movie.owner === currentUser._id)
-    return userMovies
-  }
+  // const getUserSavedMovies = (movies) => {
+  //   let userMovies
+  //   userMovies = movies.filter((movie) => movie.owner === currentUser._id)
+  //   return userMovies
+  // }
 
-  useEffect (() => {
-    const userMovies = getUserSavedMovies(moviesData);
-    setSavedMoviesData(userMovies);
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [history]);
+  // useEffect (() => {
+  //   const userMovies = getUserSavedMovies(savedMoviesData);
+  //   setUserMoviesData(userMovies);
+  //    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
 
-  useEffect (() => {
-    localStorage.setItem("saved", JSON.stringify(savedMoviesData))
-  }, [savedMoviesData]);
+  // useEffect (() => {
+  //   localStorage.setItem("saved", JSON.stringify(savedMoviesData))
+  // }, [savedMoviesData]);
 
   return (
     <main className="movies">
          <SearchForm
-          setSearchQuery={setSearchQuery}
+          setSearchSavedQuery={setSearchSavedQuery}
         />
         <TumblerMovies 
           tumblerOn={tumblerOn}
@@ -56,7 +57,8 @@ function SavedMovies({
         />
         <MoviesCardList 
             loading={loading}
-            searchQuery={searchQuery}
+            searchSavedQuery={searchSavedQuery}
+            moviesData={moviesData}
             savedMoviesData={savedMoviesData}
             handleShowMoreMovies={handleShowMoreMovies}
             moreButtonHidden={moreButtonHidden}

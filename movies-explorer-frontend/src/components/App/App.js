@@ -12,36 +12,50 @@ import Login from '../Login/Login';
 import Register from '../Register/Register';
 import Error from '../Error/Error';
 import useCurrentChunkSize from '../../utils/hooks/useCurrentChunkSize';
-import { BASE_URL } from '../../utils/MoviesApi';
 
-
-import { getAllMovies } from '../../utils/MoviesApi';
+import { getAllMovies, BASE_URL } from '../../utils/MoviesApi';
 import { register, authorize, getUserData, logout, updateUserData, saveMovie, getSavedMovies, removeFromSavedMovies } from '../../utils/MainApi';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { toHaveFormValues } from '@testing-library/jest-dom/dist/matchers';
 
 function App() {
 
+  /*
+  localStorage
+
+  'message' - пользователь авторизован 
+  'movies' - все фильмы из API BeatFilmFestival 
+  'saved' - все фильмы, сохраненные пользователем 
+  'query' - последний запрос пользователя на странице Фильмы 
+  'savedQuery' - последний запрос пользователя на странице Сохраненные фильмы 
+  'foundAllMovies' - поисковая выдача по запросу 'query', для страницы Фильмы 
+  'foundAllSavedMovies' - поисковая выдача по запросу 'savedQuery', для страницы Сохраненные фильмы 
+
+  */
+
   const location = useLocation();
   const history = useHistory();
-
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResultsShown, setSearchResultsShown] = useState(true);
+  const [searchSavedQuery, setSearchSavedQuery] = useState('');
+  const [searchResultsShown, setSearchResultsShown] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [moviesToShow, setMoviesToShow] = useState([]);
+
+  const [moviesToShow, setMoviesToShow] = useState([]); // массив фильмов для отображения на странице Фильмы
+  const [savedMoviesToShow, setSavedMoviesToShow] = useState([]); //массив фильмов для отображения на странице Сохраненные фильмы (фильмы, сохраненные пользователем)
+  const [savedMovies, setSavedMovies] = useState([]); //массив фильмов, сохраненных пользователем 
+  const [allSavedMoviesToShow, setAllSavedMoviesToShow] = useState([]); //массив всех сохраненных фильмов пользователя в текущем поиске (временное хранение для фильтра коротметражек)
+  const [allMoviesToShow, setAllMoviesToShow] = useState([]); //массив всех фильмов пользователя в текущем поиске (временное хранение для фильтра коротметражек)
+
   const [count, setCount] = useState(0);
   const [moreButtonHidden, setMoreButtonHidden] = useState(false);
-  const [allMoviesToShow, setAllMoviesToShow] = useState([]);
   const [filteredMoviesInChunks, setFilteredMoviesInChunks] = useState([]);
   const [numberOfChunks, setNumberOfChunks] = useState(0);
   const [tumblerOn, setTumblerOn] = useState (false);
   const [serverError, setServerError] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [loggedIn, setLoggedIn ] = useState(false);
-  // const [allMovies, setAllMovies] = useState([]);
-  const [savedMovies, setSavedMovies] = useState([]);
-  const [allSavedMoviesToShow, setAllSavedMoviesToShow] = useState([]);
 
-
+  //Забираю все фильмы из BeatFilm API
   const getMoviesForSearch = () => {
 
     getAllMovies()
@@ -62,11 +76,24 @@ function App() {
           }
         })
         localStorage.setItem("movies", JSON.stringify(movies));
-        // setAllMovies(movies);
       })
         .catch((err) => {
             console.log(err)
         });
+  }
+
+  //Выбираю все фильмы, сохраненные конкретным пользователем, из массива сохраненных 
+  const getUserSavedMovies = (movies) => {
+    let userMovies
+    userMovies = movies.filter((movie) => movie.owner === currentUser._id)
+    return userMovies
+  }
+
+  const saveMoviesToLocalStorage = () => {
+    getSavedMovies()
+      .then((res) => setSavedMovies(getUserSavedMovies(res)))
+        .catch((err) => console.log(err)
+        )
   }
   
   useEffect (() => {
@@ -90,11 +117,40 @@ function App() {
 
   useEffect (() => {
 
-      getSavedMovies()
-      .then((movies) => setSavedMovies(movies))
-        .catch((err) => console.log(err)
-        );
-  }, []);
+    if (localStorage.getItem("message")) {
+      saveMoviesToLocalStorage();
+      localStorage.setItem("saved", JSON.stringify((savedMovies)))
+  }}, []);
+
+  useEffect (() => {
+    localStorage.setItem("saved", JSON.stringify(savedMovies))
+  }, [savedMovies]);
+
+  useEffect (() => {
+
+    if (localStorage.getItem("query") && localStorage.getItem("foundAllMovies")) {
+      setSearchQuery(localStorage.getItem("query"));
+    };
+  }, [history]);
+
+  useEffect (() => {
+
+    if (localStorage.getItem("savedQuery") && localStorage.getItem("foundAllSavedMovies")) {
+      setSearchSavedQuery(localStorage.getItem("savedQuery"));
+    };
+  }, [history]);
+
+
+  useEffect (() => {
+
+    if (localStorage.getItem("saved")) {
+      const movies = JSON.parse(localStorage.getItem("saved"));
+      setSavedMoviesToShow(movies);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [history]);
+
+
 
   const filterMovies = (movies, query) => {
     if (!query) {
@@ -148,6 +204,7 @@ function App() {
 
   //Функция управления показом короткометражек на странице Фильмы 
   const handleShowShortMovies = () => {
+
     if (!tumblerOn) {
       setTumblerOn(true);
       let shortMoviesToShow = getShowShortMovies(moviesToShow)
@@ -177,13 +234,23 @@ function App() {
   useEffect (() => {
 
     const allMovies = JSON.parse(localStorage.getItem("movies"));
-    const filteredMovies = filterMovies(allMovies, searchQuery);
+
+    let foundAllMovies
+    let filteredMovies
+
+    if (foundAllMovies !== undefined) {
+      filteredMovies = foundAllMovies
+      } else {
+        filteredMovies = filterMovies(allMovies, searchQuery); 
+        foundAllMovies = localStorage.setItem("foundAllMovies", JSON.stringify(filteredMovies));
+      };
 
     if (searchQuery !=='' && filteredMovies.length === 0) {
       setSearchResultsShown(false);
       setMoreButtonHidden(true);
       setTumblerOn(false);
-      } else if (searchQuery !== '' && filteredMovies.length !== 0) {
+      localStorage.setItem("foundAllMovies", []);
+      } else if (searchQuery !=='' && filteredMovies.length !== 0) {
         setSearchResultsShown(true);
         let moviesInChunks = getChunks(filteredMovies, chunkSize);
         setFilteredMoviesInChunks(moviesInChunks);
@@ -191,14 +258,61 @@ function App() {
         setMoviesToShow(moviesInChunks[0]);
         setMoreButtonHidden(false);
         setTumblerOn(false);
-  }}, [searchQuery, chunkSize]);
+        localStorage.setItem('foundAllMovies', JSON.stringify(filteredMovies))
+        } else if (searchQuery === '') {
+            setSearchResultsShown(false);
+            }
+}, [searchQuery, chunkSize, history]);
 
-  //Функция, чтобы скрыть кнопку Еще 
-  const hideShowMoreMovies = () => {
-      if (count === numberOfChunks - 1) {
+
+useEffect (() => {
+
+  let allSavedMovies
+
+  if (localStorage.getItem("saved")) {
+     allSavedMovies = JSON.parse(localStorage.getItem("saved"));
+
+  let foundAllSavedMovies
+  let filteredSavedMovies
+
+  if (foundAllSavedMovies !== undefined) {
+    filteredSavedMovies = foundAllSavedMovies
+    } else {
+      filteredSavedMovies = filterMovies(allSavedMovies, searchSavedQuery); 
+      foundAllSavedMovies = localStorage.setItem("foundAllSavedMovies", JSON.stringify(filteredSavedMovies));
+    };
+
+  if (searchSavedQuery !=='' && filteredSavedMovies.length === 0) {
+    setSearchResultsShown(true);
+    setMoreButtonHidden(true);
+    setTumblerOn(false);
+    } else if (searchSavedQuery !== '' && filteredSavedMovies.length !== 0) {
+      setSearchResultsShown(true);
+      setSavedMoviesToShow(filteredSavedMovies);
+      setMoreButtonHidden(true);
+      setTumblerOn(false);
+      } else if (searchSavedQuery === '' && filteredSavedMovies !== undefined) {
+        setSearchResultsShown(true);
+        setSavedMoviesToShow(filteredSavedMovies);
         setMoreButtonHidden(true);
-        setCount(0);
+        setTumblerOn(false);
+      } else if (searchSavedQuery === '' && (filteredSavedMovies === undefined || foundAllSavedMovies === undefined) && allSavedMovies !== []) {
+        setSearchResultsShown(true);
+        setSavedMoviesToShow(allSavedMovies);
+      }  else if (searchSavedQuery === '' && filteredSavedMovies === undefined && allSavedMovies === []) {
+        setSearchResultsShown(false);
       }
+
+    }
+
+}, [searchSavedQuery, setSearchQuery, history]);
+
+//Функция, чтобы скрыть кнопку Еще 
+const hideShowMoreMovies = () => {
+    if (count === numberOfChunks - 1) {
+      setMoreButtonHidden(true);
+      setCount(0);
+    }
   }
 
   useEffect (() => 
@@ -259,8 +373,17 @@ function App() {
   const onSignOut = () => {
     logout()
       .then(() => {
-        localStorage.removeItem('message');
+        let keysToRemove = ['message', 'query', 'savedQuery', 'foundAllMovies', 'saved', 'foundAllSavedMovies'];
+
+        keysToRemove.forEach(k =>
+          localStorage.removeItem(k))
+
         setLoggedIn(false);
+        setMoviesToShow([]);
+        setSavedMoviesToShow([]);
+        setSavedMovies([]);
+        setAllSavedMoviesToShow([]);
+        setAllMoviesToShow([]);
         history.push('/');
       })
       .catch(err => console.log(err));
@@ -269,16 +392,14 @@ function App() {
   const handleSaveMovie = ({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image}) => {
    
     saveMovie({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image})
-     .then(() => getSavedMovies())
-      .then((movies) => setSavedMovies(movies))
+     .then(() => saveMoviesToLocalStorage())
         .catch(err => console.log(err));
   }
 
   const handleDeleteMovie = (movie) => {
     removeFromSavedMovies(movie._id)
-     .then(() => getSavedMovies())
-     .then((movies) => setSavedMovies(movies))
-      .catch((err) => console.log(err))
+      .then(() => saveMoviesToLocalStorage())
+        .catch((err) => console.log(err))
   }
 
   return (
@@ -296,8 +417,8 @@ function App() {
               <Movies
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
-              moviesData={moviesToShow}
-              savedMoviesData={savedMovies}
+              moviesData={moviesToShow} //фильмы, которые отображаю в текущей выдаче 
+              savedMoviesData={savedMovies} //фильмы, сохраненные пользователями 
               handleShowMoreMovies={handleShowMoreMovies}
               tumblerOn={tumblerOn}
               handleShowShortMovies={handleShowShortMovies}
@@ -315,15 +436,16 @@ function App() {
             loggedIn={loggedIn}
             component = {() => (
               <SavedMovies
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
+                searchSavedQuery={searchSavedQuery}
+                setSearchSavedQuery={setSearchSavedQuery}
                 tumblerOn={tumblerOn}
                 handleShowShortMovies={handleShowShortMovies}
                 moreButtonHidden={true}
                 searchResultsShown={searchResultsShown}
                 loading={loading}
                 onSaveMovie={handleSaveMovie}
-                moviesData={savedMovies}
+                moviesData={savedMoviesToShow} //фильмы, которые отображаю в текущей выдаче 
+                savedMoviesData={savedMovies}  //фильмы, сохраненные всеми пользователями 
                 isInAllMovies={false}
                 onDeleteMovie={handleDeleteMovie}
                 handleShowShortSavedMovies={handleShowShortSavedMovies}
