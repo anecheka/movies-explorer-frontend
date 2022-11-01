@@ -117,13 +117,12 @@ function App() {
 
   useEffect (() => {
 
-    console.log('Получаю данные пользователя');
+    // console.log('Получаю данные пользователя');
 
     if (localStorage.getItem("message")) {
       getUserData()
         .then((user) => setCurrentUser(user))
-        // .then((user) => console.log(user))
-          .then(() => console.log(`Данные пользователя: ${currentUser._id}`))
+          // .then(() => console.log(`Данные пользователя: ${currentUser._id}`))
             .then(() => setLoggedIn(true))
               .catch ((err) => console.log(err))
     };
@@ -131,7 +130,7 @@ function App() {
 
   useEffect (() => {
 
-    console.log('Получаю фильмы, сохраненные пользователем')
+    // console.log('Получаю фильмы, сохраненные пользователем')
 
     if (localStorage.getItem("message")) {
       pullLatestUserSavedsMovies()
@@ -351,7 +350,6 @@ const hideShowMoreMovies = () => {
           history.push('/movies');
          }
         })
-        .then(() => console.log(currentUser, loggedIn))
           .catch(err => console.log(err));
   }
 
