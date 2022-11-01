@@ -1,20 +1,35 @@
 import React, { useState, useEffect} from 'react';
+// import { useHistory } from 'react-router-dom';
 import './SearchForm.css';
 import icon from '../../images/search.svg'
 
-function SearchForm({ setSearchQuery, setSearchSavedQuery, isInAllMovies }) {
+function SearchForm({ searchQuery, searchSavedQuery, setSearchQuery, setSearchSavedQuery, isInAllMovies }) {
+
+  // const history = useHistory();
 
   const [searchTyping, setSearchTyping] = useState('');
 
   useEffect (() => {
-    setSearchTyping(savedQuery)
-  }, [setSearchQuery]);
+    isInAllMovies && setSearchTyping(savedQuery);
+    // !isInAllMovies && setSearchSavedQuery('');
+  }, []);
+
+  // useEffect (() => {
+  //   setSearchTyping(savedQuery);
+  // }, [setSearchQuery]);
+  // let placeholder 
+
+  // if (searchQuery === '' || searchSavedQuery === '') {
+  //   placeholder = `Нужно ввести ключевое слово`
+  //     } else {
+  //       placeholder = `Фильм`
+  //     }
 
   const handleSearchQuery = (e) => {
     setSearchTyping(e.target.value);
   } 
 
- const savedQuery = localStorage.getItem(isInAllMovies ? "query" : "savedQuery");
+ const savedQuery = localStorage.getItem("query");
 
   const handleSubmit = (e) => {
 
@@ -27,10 +42,10 @@ function SearchForm({ setSearchQuery, setSearchSavedQuery, isInAllMovies }) {
         !isInAllMovies && setSearchSavedQuery(searchTyping);
         if (isInAllMovies) {
           localStorage.setItem("query", searchTyping);
-        } else {
-          localStorage.setItem("savedQuery", searchTyping);
-        }
-     }
+        // } else {
+        //   localStorage.setItem("savedQuery", searchTyping);
+        // }
+     }}
   }
   
   return (
@@ -39,7 +54,7 @@ function SearchForm({ setSearchQuery, setSearchSavedQuery, isInAllMovies }) {
             <input className="search-form__input"
               type="text" 
               name="search-query" 
-              placeholder='Фильм'
+              placeholder="Фильм"
               value={searchTyping || ''}
               onChange={handleSearchQuery}
               required />

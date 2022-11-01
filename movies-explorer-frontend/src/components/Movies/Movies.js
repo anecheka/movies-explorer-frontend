@@ -7,6 +7,7 @@ import TumblerMovies from '../TumblerMovies/TumblerMovies';
 function Movies({ 
   searchQuery, 
   setSearchQuery, 
+  searchSavedQuery,
   moviesData, 
   handleShowMoreMovies, 
   moreButtonHidden, 
@@ -24,6 +25,7 @@ function Movies({
   return (
     <main className="movies">
         <SearchForm
+          searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           isInAllMovies={isInAllMovies}
         />
@@ -36,6 +38,7 @@ function Movies({
         <MoviesCardList
             loading={loading}
             searchQuery={searchQuery}
+            searchSavedQuery={searchSavedQuery}
             moviesData={moviesData}
             handleShowMoreMovies={handleShowMoreMovies}
             moreButtonHidden={moreButtonHidden}

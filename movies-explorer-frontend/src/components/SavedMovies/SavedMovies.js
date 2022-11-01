@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import TumblerMovies from '../TumblerMovies/TumblerMovies';
-import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
-function SavedMovies({ 
+function SavedMovies({
+  searchQuery,
   searchSavedQuery,
   setSearchSavedQuery, 
   handleShowMoreMovies, 
@@ -22,31 +20,10 @@ function SavedMovies({
   handleShowShortSavedMovies,
   }) {
 
-  // const currentUser = useContext(CurrentUserContext);
-
-  // const history = useHistory();
-  // const [userMoviesData, setUserMoviesData] = useState([]);
-
-  // const getUserSavedMovies = (movies) => {
-  //   let userMovies
-  //   userMovies = movies.filter((movie) => movie.owner === currentUser._id)
-  //   return userMovies
-  // }
-
-  // useEffect (() => {
-  //   const userMovies = getUserSavedMovies(savedMoviesData);
-  //   setUserMoviesData(userMovies);
-  //    // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-
-  // useEffect (() => {
-  //   localStorage.setItem("saved", JSON.stringify(savedMoviesData))
-  // }, [savedMoviesData]);
-
   return (
     <main className="movies">
          <SearchForm
+          searchSavedQuery={searchSavedQuery}
           setSearchSavedQuery={setSearchSavedQuery}
         />
         <TumblerMovies 
@@ -57,6 +34,7 @@ function SavedMovies({
         />
         <MoviesCardList 
             loading={loading}
+            searchQuery={searchQuery}
             searchSavedQuery={searchSavedQuery}
             moviesData={moviesData}
             savedMoviesData={savedMoviesData}

@@ -17,17 +17,16 @@ function MoviesCardList({
   }) {
 
   const hideShowMoreButtonClassName = `movies-card-list__more-button ${searchQuery === '' || moreButtonHidden ? 'movies-card-list__more-button_hidden' : ''}`;
-  const hideNoSearchQueryTitle = `movies-card-list__callout ${(searchQuery === '' && isInAllMovies) || searchResultsShown === false ? '' : 'movies-card-list__callout_hidden' }`;
+  const hideNoSearchQueryTitle = `movies-card-list__callout ${(searchQuery === '' && isInAllMovies) || savedMoviesData.length === 0 ? '' : 'movies-card-list__callout_hidden' }`;
   const hideSearchList = `movies-card-list__movies ${(searchQuery === '' && isInAllMovies) || searchResultsShown === false ? 'movies-card-list__movies_hidden' : ''}`
-  // const mainTitle = `${searchResultsShown && isInAllMovies ? `Введите свой запрос в строку поиска` : `Ничего не найдено`}`
 
   let mainTitle 
 
-  if (!searchResultsShown && isInAllMovies) {
-      mainTitle = `Введите свой запрос в строку поиска`
-  } else if (!searchResultsShown && !isInAllMovies) {
-    mainTitle = `У вас пока нет сохраненных фильмов`
-  } else {
+  if (isInAllMovies && searchQuery === '') {
+      mainTitle = `Нужно ввести ключевое слово`
+  } else if (!isInAllMovies && savedMoviesData.length === 0) {
+    mainTitle = `У вас нет сохраненных фильмов`
+  } else if (isInAllMovies && searchQuery !== '' && moviesData.length === 0) {
     mainTitle = `Ничего не найдено`
   }
 
@@ -45,18 +44,6 @@ function MoviesCardList({
                         onSaveMovie={onSaveMovie}
                         onDeleteMovie={onDeleteMovie}
                         isInAllMovies={isInAllMovies}
-                        savedMoviesData={savedMoviesData}
-                    />
-                )
-            }
-            { !loading && !isInAllMovies && 
-              savedMoviesData.map((card) => 
-                    <MoviesCard
-                        key={card.movieId} 
-                        card={card}
-                        onSaveMovie={onSaveMovie}
-                        isInAllMovies={isInAllMovies}
-                        onDeleteMovie={onDeleteMovie}
                         savedMoviesData={savedMoviesData}
                     />
                 )

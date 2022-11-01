@@ -22,11 +22,23 @@ function handleSubmit(e) {
 
     e.preventDefault();
     const { name, email } = values;
-    
-    onEditProfile ({
-        name,
-        email,
-    });
+
+    if (!values.email) {
+        onEditProfile ({
+            name,
+            email: currentUser.email,
+        })
+        } else if (!values.name) {
+            onEditProfile ({
+                name: currentUser.name,
+                email,
+            });
+            }  else {
+                onEditProfile ({
+                    name,
+                    email,
+                });
+        }
 }
 
   return (
@@ -45,7 +57,7 @@ function handleSubmit(e) {
                 <label className="form__input-copy form__input-label" htmlFor="name">Имя</label>
                 <input className="form__input-copy form__input-field" 
                     type="text" 
-                    value={values.name || currentUser.name} 
+                    value={values.name || currentUser.name}
                     onChange={handleChange} 
                     name="name" 
                     id="name" 
@@ -73,7 +85,6 @@ function handleSubmit(e) {
             </p>
             {errors.email && <span className="form__input-error-message">{errors.email}</span>}
         </Form>
-        {/* <button className={buttonEditClassName} onClick={handleEditClick}>Редактировать</button> */}
         <button className="profile__sign-out" onClick={onSignOut}>Выйти из аккаунта</button>
     </main>
   );

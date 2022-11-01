@@ -8,10 +8,10 @@ function TumblerMovies( {tumblerOn, handleShowShortMovies, handleShowShortSavedM
   function handleClick(e) {
     if (!isInAllMovies) {
       handleShowShortSavedMovies();
+    } else {
+      handleShowShortMovies();
     }
-    handleShowShortMovies();
 }
-
   return (
     <div className="toggle">
       <button 
