@@ -47,7 +47,7 @@ function App() {
   const [allMoviesToShow, setAllMoviesToShow] = useState([]); //массив всех фильмов пользователя в текущем поиске (временное хранение для фильтра коротметражек)
 
   const [count, setCount] = useState(0);
-  const [moreButtonHidden, setMoreButtonHidden] = useState(false);
+  const [moreButtonHidden, setMoreButtonHidden] = useState(true);
   const [filteredMoviesInChunks, setFilteredMoviesInChunks] = useState([]);
   const [numberOfChunks, setNumberOfChunks] = useState(0);
   const [tumblerOn, setTumblerOn] = useState (false);
@@ -102,30 +102,18 @@ function App() {
 
     if (localStorage.getItem("message")) {
       tokenCheck();
+      // console.log('Проверяю токен')
+      // console.log(`${currentUser} при проверке токена`)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect (() => {
 
-    if (localStorage.getItem("message")) {
+    if (localStorage.getItem("message") && !localStorage.getItem("movies")) {
       getMoviesForSearch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [history]);
-
-
-  useEffect (() => {
-
-    // console.log('Получаю данные пользователя');
-
-    if (localStorage.getItem("message")) {
-      getUserData()
-        .then((user) => setCurrentUser(user))
-          // .then(() => console.log(`Данные пользователя: ${currentUser._id}`))
-            .then(() => setLoggedIn(true))
-              .catch ((err) => console.log(err))
-    };
   }, []);
 
   useEffect (() => {
@@ -135,7 +123,7 @@ function App() {
     if (localStorage.getItem("message")) {
       pullLatestUserSavedsMovies()
       }
-  }, []);
+  }, [currentUser]);
 
   useEffect (() => {
 
@@ -210,6 +198,8 @@ function App() {
 
   //Функция получения массива короткометражек
   const getShowShortMovies = (movies) => {
+    
+    setMoreButtonHidden(true);
 
     let shortMovies = movies.filter((movie) => { 
       return movie.duration <= 40
@@ -220,16 +210,19 @@ function App() {
   //Функция управления показом короткометражек на странице Фильмы 
   const handleShowShortMovies = () => {
 
+    const foundMovies = JSON.parse(localStorage.getItem("foundMovies"));
+
     if (!tumblerOn) {
       setTumblerOn(true);
       localStorage.setItem("tumblerOn","showsShortMovies");
-      let shortMoviesToShow = getShowShortMovies(moviesToShow)
-      setAllMoviesToShow(moviesToShow);
+      let shortMoviesToShow = getShowShortMovies(foundMovies);
+      setAllMoviesToShow(foundMovies);
       setMoviesToShow(shortMoviesToShow);
     } else {
       setTumblerOn(false);
       localStorage.removeItem("tumblerOn");
       setMoviesToShow(allMoviesToShow);
+      console.log(allMoviesToShow);
     }
   }
 
@@ -251,6 +244,7 @@ function App() {
     const allMovies = JSON.parse(localStorage.getItem("movies"));
 
     const filteredMovies = filterMovies(allMovies, searchQuery);
+    localStorage.setItem("foundMovies", JSON.stringify(filteredMovies));
 
     if (searchQuery !=='' && filteredMovies.length === 0) {
       setSearchResultsShown(false);
@@ -316,6 +310,7 @@ const hideShowMoreMovies = () => {
   [moviesToShow])
 
   const handleRegister = ({name, email, password}) => {
+
     register ({name, email, password})
       .then ((res) => {
         handleLogin({email, password})
@@ -327,12 +322,14 @@ const hideShowMoreMovies = () => {
   }
 
   const handleLogin = ({email, password}) => {
+
     authorize ({email, password})
     .then((res) => {
         localStorage.setItem('message','isUserAuth');
         setCurrentUser(res.user);
         setLoggedIn(true);
         setServerError(null);
+        getMoviesForSearch();
         history.push('/movies');
       }).catch (
         ((err) => {
@@ -347,10 +344,10 @@ const hideShowMoreMovies = () => {
         setCurrentUser(user);
         setLoggedIn(true);
         if (location.pathname === '/signin' || location.pathname === '/signup') {
-          history.push('/movies');
-         }
+              history.push('/movies');
+            };
         })
-          .catch(err => console.log(err));
+            .catch(err => console.log(err, "Ошибка проверки токена"));
   }
 
   const handleEditProfile = ({name, email}) => {
@@ -369,7 +366,7 @@ const hideShowMoreMovies = () => {
   const onSignOut = () => {
     logout()
       .then(() => {
-        let keysToRemove = ['message', 'query', 'savedQuery', 'foundAllMovies', 'foundAllSavedMovies', 'tumblerOn'];
+        let keysToRemove = ['message', 'query', 'savedQuery', 'foundMovies', 'tumblerOn'];
 
         keysToRemove.forEach(k =>
           localStorage.removeItem(k))

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './MoviesCard.css';
 
-function MoviesCard({ card, onSaveMovie, onDeleteMovie, isInAllMovies, savedMoviesData, moviesData }) {
+function MoviesCard({ card, onSaveMovie, onDeleteMovie, isInAllMovies, savedMoviesData }) {
 
   const currentUser = useContext(CurrentUserContext);
   const isSaved = savedMoviesData.some(i => i.movieId === card.movieId);
