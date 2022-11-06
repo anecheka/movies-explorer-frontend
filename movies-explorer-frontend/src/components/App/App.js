@@ -55,8 +55,6 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [loggedIn, setLoggedIn ] = useState(false);
 
-
-
   //Забираю все фильмы из BeatFilm API
   const getMoviesForSearch = () => {
 
@@ -386,6 +384,7 @@ const hideShowMoreMovies = () => {
   }
 
   const handleSaveMovie = ({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image}) => {
+    console.log(savedMOvies)
     console.log(`Вывожу ${currentUser._id} при сохранении фильма`)
     saveMovie({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image})
      .then(() => pullLatestUserSavedsMovies())
