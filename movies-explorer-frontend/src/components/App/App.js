@@ -385,7 +385,7 @@ const hideShowMoreMovies = () => {
 
   const handleSaveMovie = ({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image}) => {
     console.log(savedMovies)
-    console.log(getSavedMovies.then((res) => console.log(res)))
+    console.log(getSavedMovies().then((res) => console.log(res)))
     console.log(`Вывожу ${currentUser._id} при сохранении фильма`)
     saveMovie({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image})
      .then(() => pullLatestUserSavedsMovies())
