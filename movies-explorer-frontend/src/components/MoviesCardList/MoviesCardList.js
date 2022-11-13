@@ -18,7 +18,7 @@ function MoviesCardList({
 
   const hideShowMoreButtonClassName = `movies-card-list__more-button ${searchQuery === '' || moreButtonHidden ? 'movies-card-list__more-button_hidden' : ''}`;
   const hideNoSearchQueryTitle = `movies-card-list__callout ${(searchQuery === '' && isInAllMovies) || savedMoviesData.length === 0 ? '' : 'movies-card-list__callout_hidden' }`;
-  const hideSearchList = `movies-card-list__movies ${(searchQuery === '' && isInAllMovies) || searchResultsShown === false ? 'movies-card-list__movies_hidden' : ''}`
+  const hideSearchList = `movies-card-list__movies ${(searchQuery === '' && isInAllMovies) || searchResultsShown === false && isInAllMovies ? 'movies-card-list__movies_hidden' : ''}`
 
   let mainTitle 
 
@@ -33,7 +33,6 @@ function MoviesCardList({
   return (
     <section className="movies-card-list">
       <h2 className={hideNoSearchQueryTitle}>{mainTitle}</h2>
-       { searchResultsShown && 
         <ul className={hideSearchList}>
             { loading && <Preloader />}
             { !loading && 
@@ -48,7 +47,7 @@ function MoviesCardList({
                     />
                 )
             }
-        </ul>}
+        </ul>
       <button onClick={handleShowMoreMovies} className={hideShowMoreButtonClassName}>Ещё</button>
     </section>
   );

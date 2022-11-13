@@ -384,12 +384,12 @@ const hideShowMoreMovies = () => {
   }
 
   const handleSaveMovie = ({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image}) => {
-    console.log(savedMovies)
+    // console.log(savedMovies)
     console.log(getSavedMovies().then((res) => console.log(res)))
     console.log(`Вывожу ${currentUser._id} при сохранении фильма`)
     saveMovie({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image})
      .then(() => pullLatestUserSavedsMovies())
-        .catch(err => console.log(err));
+        .catch(err => console.log(`Oшибка ${err} при сохранении фильма ${currentUser._id}`));
   }
 
   const handleDeleteMovie = (movie) => {
