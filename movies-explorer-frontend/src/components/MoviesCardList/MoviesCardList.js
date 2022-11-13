@@ -18,14 +18,14 @@ function MoviesCardList({
 
   const hideShowMoreButtonClassName = `movies-card-list__more-button ${searchQuery === '' || moreButtonHidden ? 'movies-card-list__more-button_hidden' : ''}`;
   const hideNoSearchQueryTitle = `movies-card-list__callout ${(searchQuery === '' && isInAllMovies) || savedMoviesData.length === 0 ? '' : 'movies-card-list__callout_hidden' }`;
-  const hideSearchList = `movies-card-list__movies ${(searchQuery === '' && isInAllMovies) || searchResultsShown === false && isInAllMovies || savedMoviesData.length === 0 && !isInAllMovies ? 'movies-card-list__movies_hidden' : ''}`
+  const hideSearchList = `movies-card-list__movies ${(searchQuery === '' && isInAllMovies) || (searchResultsShown === false && isInAllMovies) || (savedMoviesData.length === 0 && !isInAllMovies) ? 'movies-card-list__movies_hidden' : ''}`
 
   let mainTitle 
 
   if (isInAllMovies && searchQuery === '') {
       mainTitle = `Нужно ввести ключевое слово`
   } else if (!isInAllMovies && savedMoviesData.length === 0) {
-    mainTitle = `У вас нет сохраненных фильмов`
+    mainTitle = `У вас нет сохранённых фильмов`
   } else if (isInAllMovies && searchQuery !== '' && moviesData.length === 0) {
     mainTitle = `Ничего не найдено`
   }

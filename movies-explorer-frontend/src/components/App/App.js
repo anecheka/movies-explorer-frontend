@@ -12,6 +12,7 @@ import Login from '../Login/Login';
 import Register from '../Register/Register';
 import Error from '../Error/Error';
 import useCurrentChunkSize from '../../utils/hooks/useCurrentChunkSize';
+import { shortMovieLength } from '../../utils/constants';
 
 import { getAllMovies, BASE_URL } from '../../utils/MoviesApi';
 import { register, authorize, getUserData, logout, updateUserData, saveMovie, getSavedMovies, removeFromSavedMovies } from '../../utils/MainApi';
@@ -109,7 +110,11 @@ function App() {
   useEffect (() => {
 
     if (localStorage.getItem("message") && !localStorage.getItem("movies")) {
-      getMoviesForSearch();
+      setLoading(true)
+      getMoviesForSearch()
+      .then(() => setLoading(false))
+        .catch((err) => console.log(err)
+        )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -120,7 +125,7 @@ function App() {
 
     if (localStorage.getItem("message")) {
       pullLatestUserSavedsMovies()
-      }
+    }
   }, [currentUser]);
 
   useEffect (() => {
@@ -155,6 +160,7 @@ function App() {
   }, [history, setTumblerOn]);
 
   const filterMovies = (movies, query) => {
+
     if (!query) {
         return;
     }
@@ -188,10 +194,8 @@ function App() {
 
   //Функция, чтобы загрузить следующий чанк фильмов при клике на кнопку Еще
   const handleShowMoreMovies = async () => {
-    setLoading(true);
     setCount((chunk) => chunk + 1);
     getMoviesChunk(count, filteredMoviesInChunks);
-    setLoading(false);
   }
 
   //Функция получения массива короткометражек
@@ -200,7 +204,7 @@ function App() {
     setMoreButtonHidden(true);
 
     let shortMovies = movies.filter((movie) => { 
-      return movie.duration <= 40
+      return movie.duration <= shortMovieLength
     });
     return shortMovies;
   }
@@ -249,7 +253,6 @@ function App() {
       setMoreButtonHidden(true);
       setMoviesToShow([]);
       setTumblerOn(false);
-      // localStorage.setItem("foundAllMovies", []);
       } else if (searchQuery !=='' && filteredMovies.length !== 0 && !localStorage.getItem("tumblerOn")) {
         setSearchResultsShown(true);
         let moviesInChunks = getChunks(filteredMovies, chunkSize);
@@ -258,12 +261,10 @@ function App() {
         setMoviesToShow(moviesInChunks[0]);
         setMoreButtonHidden(false);
         setTumblerOn(false);
-        // localStorage.setItem('foundAllMovies', JSON.stringify(filteredMovies))
         } else if (searchQuery === '') {
             setSearchResultsShown(false);
             } else if (searchQuery !=='' && filteredMovies.length !== 0 && localStorage.getItem("tumblerOn")){
               setSearchResultsShown(true);
-              // localStorage.setItem('foundAllMovies', JSON.stringify(filteredMovies)); 
               let shortMoviesToShow = getShowShortMovies(filteredMovies);
               setAllMoviesToShow(filteredMovies);
               setMoviesToShow(shortMoviesToShow);
@@ -364,7 +365,7 @@ const hideShowMoreMovies = () => {
   const onSignOut = () => {
     logout()
       .then(() => {
-        let keysToRemove = ['message', 'query', 'savedQuery', 'foundMovies', 'tumblerOn'];
+        let keysToRemove = ['message', 'query', 'savedQuery', 'foundMovies', 'tumblerOn', 'movies'];
 
         keysToRemove.forEach(k =>
           localStorage.removeItem(k))
@@ -394,10 +395,8 @@ const hideShowMoreMovies = () => {
 
   const handleDeleteMovie = (movie) => {
     // console.log(`Вывожу ${currentUser._id} при удалении из сохраненных`)
-    // console.log("1", pullLatestUserSavedsMovies());
     removeFromSavedMovies(movie._id)
       .then(() => pullLatestUserSavedsMovies())
-      // .then(() => console.log("2", pullLatestUserSavedsMovies()))
         .catch((err) => console.log(err))
   }
 

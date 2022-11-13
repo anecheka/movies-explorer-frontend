@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
+import { tabletBreakpoint, mobileBreakpoint, desktopMoviesCount, tabletMoviesCount, mobileMoviesCount } from '../constants';
 
 const getChunkSize = () => {
    // eslint-disable-next-line no-unused-vars
   let chunkSize
 
-  if (window.innerWidth >= 768) {
-    return chunkSize = 7
-  } else if (window.innerWidth < 768 && window.innerWidth >=320 ){
-    return chunkSize = 6
+
+  if (window.innerWidth >= tabletBreakpoint) {
+    return chunkSize = desktopMoviesCount
+  } else if (window.innerWidth < tabletBreakpoint && window.innerWidth >=mobileBreakpoint){
+    return chunkSize = tabletMoviesCount
   } else {
-    return chunkSize = 5
+    return chunkSize = mobileBreakpoint
   }
 }
 
