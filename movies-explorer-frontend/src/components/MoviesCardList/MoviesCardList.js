@@ -17,7 +17,7 @@ function MoviesCardList({
   }) {
 
   const hideShowMoreButtonClassName = `movies-card-list__more-button ${searchQuery === '' || moreButtonHidden ? 'movies-card-list__more-button_hidden' : ''}`;
-  const hideNoSearchQueryTitle = `movies-card-list__callout ${(searchQuery === '' && isInAllMovies) || savedMoviesData.length === 0 ? '' : 'movies-card-list__callout_hidden' }`;
+  const hideNoSearchQueryTitle = `movies-card-list__callout ${(searchQuery === '' && isInAllMovies) || (savedMoviesData.length === 0 && !isInAllMovies) || (moviesData.length === 0 && isInAllMovies) ? '' : 'movies-card-list__callout_hidden' }`;
   const hideSearchList = `movies-card-list__movies ${(searchQuery === '' && isInAllMovies) || (searchResultsShown === false && isInAllMovies) || (savedMoviesData.length === 0 && !isInAllMovies) ? 'movies-card-list__movies_hidden' : ''}`
 
   let mainTitle 
@@ -29,6 +29,10 @@ function MoviesCardList({
   } else if (isInAllMovies && searchQuery !== '' && moviesData.length === 0) {
     mainTitle = `Ничего не найдено`
   }
+
+  console.log(isInAllMovies)
+  console.log(searchQuery !=='')
+  console.log (moviesData.length)
 
   return (
     <section className="movies-card-list">
