@@ -12,7 +12,7 @@ import Login from '../Login/Login';
 import Register from '../Register/Register';
 import Error from '../Error/Error';
 import useCurrentChunkSize from '../../utils/hooks/useCurrentChunkSize';
-import { shortMovieLength } from '../../utils/constants';
+import { SHORT_MOVIE_LENGTH } from '../../utils/constants';
 
 import { getAllMovies, BASE_URL } from '../../utils/MoviesApi';
 import { register, authorize, getUserData, logout, updateUserData, saveMovie, getSavedMovies, removeFromSavedMovies } from '../../utils/MainApi';
@@ -204,7 +204,7 @@ function App() {
     setMoreButtonHidden(true);
 
     let shortMovies = movies.filter((movie) => { 
-      return movie.duration <= shortMovieLength
+      return movie.duration <= SHORT_MOVIE_LENGTH
     });
     return shortMovies;
   }
