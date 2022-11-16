@@ -30,9 +30,9 @@ function MoviesCardList({
     mainTitle = `Ничего не найдено`
   }
 
-  console.log(isInAllMovies)
-  console.log(searchQuery !=='')
-  console.log (moviesData.length)
+  // console.log(isInAllMovies)
+  // console.log(searchQuery !=='')
+  // console.log (moviesData.length)
 
   return (
     <section className="movies-card-list">

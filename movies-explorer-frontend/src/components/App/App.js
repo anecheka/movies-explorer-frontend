@@ -93,7 +93,12 @@ function App() {
   const pullLatestUserSavedsMovies = () => {
     getSavedMovies()
       .then((res) => setSavedMovies(getUserSavedMovies(res)))
-        .catch((err) => console.log(err)
+        .catch((err) => {
+          console.log(err); 
+          if (err === 401) {
+            unauthorizedSignOut();
+          }
+        } 
         )
   }
   
@@ -242,56 +247,61 @@ function App() {
   }
 
   useEffect (() => {
+    if (localStorage.getItem("message")) {
+    
+      const allMovies = JSON.parse(localStorage.getItem("movies"));
 
-    const allMovies = JSON.parse(localStorage.getItem("movies"));
+      const filteredMovies = filterMovies(allMovies, searchQuery);
+      localStorage.setItem("foundMovies", JSON.stringify(filteredMovies));
 
-    const filteredMovies = filterMovies(allMovies, searchQuery);
-    localStorage.setItem("foundMovies", JSON.stringify(filteredMovies));
-
-    if (searchQuery !=='' && filteredMovies.length === 0) {
-      setSearchResultsShown(false);
-      setMoreButtonHidden(true);
-      setMoviesToShow([]);
-      setTumblerOn(false);
-      } else if (searchQuery !=='' && filteredMovies.length !== 0 && !localStorage.getItem("tumblerOn")) {
-        setSearchResultsShown(true);
-        let moviesInChunks = getChunks(filteredMovies, chunkSize);
-        setFilteredMoviesInChunks(moviesInChunks);
-        setNumberOfChunks(moviesInChunks.length);
-        setMoviesToShow(moviesInChunks[0]);
-        setMoreButtonHidden(false);
+      if (searchQuery !=='' && filteredMovies.length === 0) {
+        setSearchResultsShown(false);
+        setMoreButtonHidden(true);
+        setMoviesToShow([]);
         setTumblerOn(false);
-        } else if (searchQuery === '') {
-            setSearchResultsShown(false);
-            } else if (searchQuery !=='' && filteredMovies.length !== 0 && localStorage.getItem("tumblerOn")){
-              setSearchResultsShown(true);
-              let shortMoviesToShow = getShowShortMovies(filteredMovies);
-              setAllMoviesToShow(filteredMovies);
-              setMoviesToShow(shortMoviesToShow);
-              setMoreButtonHidden(true);
-            }
+        } else if (searchQuery !=='' && filteredMovies.length !== 0 && !localStorage.getItem("tumblerOn")) {
+          setSearchResultsShown(true);
+          let moviesInChunks = getChunks(filteredMovies, chunkSize);
+          setFilteredMoviesInChunks(moviesInChunks);
+          setNumberOfChunks(moviesInChunks.length);
+          setMoviesToShow(moviesInChunks[0]);
+          setMoreButtonHidden(false);
+          setTumblerOn(false);
+          } else if (searchQuery === '') {
+              setSearchResultsShown(false);
+              } else if (searchQuery !=='' && filteredMovies.length !== 0 && localStorage.getItem("tumblerOn")){
+                setSearchResultsShown(true);
+                let shortMoviesToShow = getShowShortMovies(filteredMovies);
+                setAllMoviesToShow(filteredMovies);
+                setMoviesToShow(shortMoviesToShow);
+                setMoreButtonHidden(true);
+              }
+      }
 }, [searchQuery, chunkSize, location, history]);
 
 
 useEffect (() => {
 
-  const filteredSavedMovies = filterMovies(savedMovies, searchSavedQuery); 
-  
-  if (searchSavedQuery !=='' && filteredSavedMovies.length === 0) {
-    setSearchResultsShown(true);
-    setMoreButtonHidden(true);
-    setTumblerOn(false);
-    } else if (searchSavedQuery !== '' && filteredSavedMovies.length !== 0) {
+  if (localStorage.getItem("message")) {
+
+    const filteredSavedMovies = filterMovies(savedMovies, searchSavedQuery); 
+    
+    if (searchSavedQuery !=='' && filteredSavedMovies.length === 0) {
       setSearchResultsShown(true);
-      setSavedMoviesToShow(filteredSavedMovies);
       setMoreButtonHidden(true);
       setTumblerOn(false);
-      } else if (searchSavedQuery === '' && savedMovies.length !== 0) {
+      } else if (searchSavedQuery !== '' && filteredSavedMovies.length !== 0) {
         setSearchResultsShown(true);
-        setSavedMoviesToShow(savedMovies);
+        setSavedMoviesToShow(filteredSavedMovies);
         setMoreButtonHidden(true);
         setTumblerOn(false);
-        }
+        } else if (searchSavedQuery === '' && savedMovies.length !== 0) {
+          setSearchResultsShown(true);
+          setSavedMoviesToShow(savedMovies);
+          setMoreButtonHidden(true);
+          setTumblerOn(false);
+          }
+    }
 }, [searchSavedQuery, setSearchQuery, history, savedMovies]);
 
 //Функция, чтобы скрыть кнопку Еще 
@@ -301,6 +311,7 @@ const hideShowMoreMovies = () => {
       setCount(0);
     }
   }
+  // }
 
   useEffect (() => 
   
@@ -346,20 +357,36 @@ const hideShowMoreMovies = () => {
               history.push('/movies');
             };
         })
-            .catch(err => console.log(err, "Ошибка проверки токена"));
+            .catch(err => {
+              console.log(err, "Ошибка проверки токена");
+              if (err = 401) {
+                unauthorizedSignOut();
+              }
+          }
+        )
   }
 
   const handleEditProfile = ({name, email}) => {
 
    updateUserData(name, email)
-    .then((user) => {
-      setServerError('Данные обновлены');
-      setCurrentUser(user => ({...user, name, email }));
-        }).catch(
-          ((err) => {
-            setServerError(err.message);
-            })
-        )
+    // .then((user) => {
+    //   setCurrentUser(user => ({...user, name, email }));
+    //   setServerError('Данные обновлены');
+    //     })
+    .then((user) => setCurrentUser(user => ({...user, name, email })))
+      .then(() => console.log('Данные пользователя обновлены'))
+      .then(() => setServerError('Данные обновлены'))
+        // .catch(
+        //   ((err) => {
+        //     setServerError(err.message);
+        //     })
+        // )
+        .catch((err) => {
+          setServerError(err.message);
+          if (err = 401) {
+            unauthorizedSignOut();
+          }
+        })   
 }
 
   const onSignOut = () => {
@@ -379,9 +406,30 @@ const hideShowMoreMovies = () => {
         setTumblerOn(false);
         setSearchQuery('');
         setSearchSavedQuery('');
-        history.push('/');
+        setCurrentUser({});
+        history.push('/signin');
       })
       .catch(err => console.log(err));
+  }
+
+  //Функция сайн аута при удалении jwt токена из localStorage
+  const unauthorizedSignOut = () => {
+      let keysToRemove = ['message', 'query', 'savedQuery', 'foundMovies', 'tumblerOn', 'movies'];
+
+      keysToRemove.forEach(k =>
+        localStorage.removeItem(k))
+
+      setLoggedIn(false);
+      setMoviesToShow([]);
+      setSavedMoviesToShow([]);
+      setSavedMovies([]);
+      setAllSavedMoviesToShow([]);
+      setAllMoviesToShow([]);
+      setTumblerOn(false);
+      setSearchQuery('');
+      setSearchSavedQuery('');
+      setCurrentUser({});
+      history.push('/signin');
   }
 
   const handleSaveMovie = ({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image}) => {
@@ -390,14 +438,26 @@ const hideShowMoreMovies = () => {
     // console.log(`Вывожу ${currentUser._id} при сохранении фильма`)
     saveMovie({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image})
      .then(() => pullLatestUserSavedsMovies())
-        .catch(err => console.log(`Oшибка ${err} при сохранении фильма ${currentUser._id}`));
+      .catch((err) => {
+        console.log(err, "Ошибка сохранения фильма");
+        if (err = 401) {
+          unauthorizedSignOut();
+        }
+      })   
+    //  .catch(err => console.log(`Oшибка ${err} при сохранении фильма ${currentUser._id}`));
   }
 
   const handleDeleteMovie = (movie) => {
     // console.log(`Вывожу ${currentUser._id} при удалении из сохраненных`)
     removeFromSavedMovies(movie._id)
       .then(() => pullLatestUserSavedsMovies())
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.log(err, "Ошибка удаления фильма");
+          if (err = 401) {
+            unauthorizedSignOut();
+          }
+        })
+        // console.log(err))
   }
 
   return (
@@ -407,6 +467,18 @@ const hideShowMoreMovies = () => {
         <Switch>
           <Route exact path="/">
             <Main />
+          </Route>
+          <Route path="/signin">
+            <Login
+              onLogin={handleLogin}
+              serverError={serverError}
+            />
+          </Route>
+          <Route path="/signup">
+            <Register 
+              onRegister={handleRegister}
+              serverError={serverError}
+            />
           </Route>
           <ProtectedRoute 
             path="/movies"
@@ -478,6 +550,12 @@ const hideShowMoreMovies = () => {
           <Route path="*">
             <Error />
           </Route>
+          {/* <ProtectedRoute 
+            path="*"
+            loggedIn={loggedIn}
+          >
+            <Error />
+          </ProtectedRoute> */}
         </Switch>
         {location.pathname !=='/signin' && location.pathname !=='/signup' && <Footer/> }
       </div>
