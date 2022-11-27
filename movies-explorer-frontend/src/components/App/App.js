@@ -113,6 +113,16 @@ function App() {
   }, []);
 
   useEffect (() => {
+   
+  if (serverError !== null) {
+    
+    setServerError(null);
+    console.log('Обнуляю ошибку')
+    }
+
+  }, [location]);
+
+  useEffect (() => {
 
     if (localStorage.getItem("message") && !localStorage.getItem("movies")) {
       setLoading(true)
@@ -138,7 +148,7 @@ function App() {
     if (localStorage.getItem("query")) {
       setSearchQuery(localStorage.getItem("query"));
     };
-  }, [history]);
+  }, [location]);
 
   useEffect (() => {
 
