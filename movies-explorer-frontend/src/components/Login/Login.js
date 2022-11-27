@@ -8,6 +8,8 @@ import { useFormWithValidation } from '../../utils/hooks/useFormWithValidation';
 
 function Login( {onLogin, serverError} ) {
 
+  // console.log(isValid);
+
   const { 
     values, 
     handleChange, 
