@@ -367,26 +367,38 @@ const hideShowMoreMovies = () => {
   }
 
   const handleEditProfile = ({name, email}) => {
-
-   updateUserData(name, email)
-    // .then((user) => {
-    //   setCurrentUser(user => ({...user, name, email }));
-    //   setServerError('Данные обновлены');
-    //     })
+    
+   if ((name === currentUser.name && email ===currentUser.email)) {
+    setServerError('Попытка сохранить текущие данные. Для обновления данных необходимо внести изменения')
+   } else {
+    updateUserData(name, email)
     .then((user) => setCurrentUser(user => ({...user, name, email })))
-      .then(() => console.log('Данные пользователя обновлены'))
       .then(() => setServerError('Данные обновлены'))
-        // .catch(
-        //   ((err) => {
-        //     setServerError(err.message);
-        //     })
-        // )
         .catch((err) => {
           setServerError(err.message);
           if (err = 401) {
             unauthorizedSignOut();
           }
         })   
+   }
+  //  updateUserData(name, email)
+  //   // .then((user) => {
+  //   //   setCurrentUser(user => ({...user, name, email }));
+  //   //   setServerError('Данные обновлены');
+  //   //     })
+  //   .then((user) => setCurrentUser(user => ({...user, name, email })))
+  //     .then(() => setServerError('Данные обновлены'))
+  //       // .catch(
+  //       //   ((err) => {
+  //       //     setServerError(err.message);
+  //       //     })
+  //       // )
+  //       .catch((err) => {
+  //         setServerError(err.message);
+  //         if (err = 401) {
+  //           unauthorizedSignOut();
+  //         }
+  //       })   
 }
 
   const onSignOut = () => {
