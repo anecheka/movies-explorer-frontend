@@ -14,17 +14,6 @@ export function useFormWithValidation() {
         password: '',
     });
     const [isValid, setIsValid] = useState(false);
-
-    const validateEmail = (value) => {
-
-      let validRegex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-
-      if (value.match(validRegex)) {
-        return true;
-      }
-          return false;
-
-    }
   
     const handleChange = (e) => {
       const target = e.target;
@@ -32,14 +21,8 @@ export function useFormWithValidation() {
       const value = target.value;
       setValues({...values, [name]: value});
       setErrors({...errors, [name]: target.validationMessage});
+      setIsValid(target.closest("form").checkValidity())
 
-      if ((validateEmail(document.getElementsByName("email")[0].value))) {
-        setIsValid(target.closest("form").checkValidity())
-      }
-
-      // console.log(isValid);
-      
-      // setIsValid(validateEmail());
     };
   
     const resetForm = useCallback(

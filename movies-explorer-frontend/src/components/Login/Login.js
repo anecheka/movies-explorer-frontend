@@ -56,9 +56,17 @@ function handleSubmit(e) {
                   onChange={handleChange}
                   minLength="2" 
                   required 
+                  pattern="^(\D)+(\w)*((\.(\w)+)?)+@(\D)+(\w)*((\.(\D)+(\w)*)+)?(\.)[a-z]{2,}$"
                 />
            </p>
-           {errors.email && <span className="form__input-error-message">{errors.email}</span>}
+           {errors.email && <span className="form__input-error-message">
+            {
+                    errors.email==="Введите данные в указанном формате." ? 
+                    "Проверьте правильность написания E-mail." : errors.email
+                }
+
+            </span>}
+           {/* {errors.email && <span className="form__input-error-message">{errors.email}</span>} */}
             <p className="form__input form__input_label-position_top">
                 <label className="form__input-copy form__input-label form__input-label_label-position_top" htmlFor="login-password">Пароль</label>
                 <input className="form__input-copy form__input-field form__input-field_label-position_top" 

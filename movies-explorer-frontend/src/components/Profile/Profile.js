@@ -80,10 +80,17 @@ function handleSubmit(e) {
                     onChange={handleChange}
                     name="email" 
                     id="email" 
-                    minLength="2" 
-                   />
-            </p>
-            {errors.email && <span className="form__input-error-message">{errors.email}</span>}
+                    minLength="2"
+                    pattern="^(\D)+(\w)*((\.(\w)+)?)+@(\D)+(\w)*((\.(\D)+(\w)*)+)?(\.)[a-z]{2,}$"
+                    />
+               </p>
+            {errors.email && <span className="form__input-error-message">
+                {
+                        errors.email==="Введите данные в указанном формате." ? 
+                        "Проверьте правильность написания E-mail." : errors.email
+                    }
+
+                </span>}
         </Form>
         <button className="profile__sign-out" onClick={onSignOut}>Выйти из аккаунта</button>
     </main>
