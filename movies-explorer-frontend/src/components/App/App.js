@@ -12,6 +12,7 @@ import Login from '../Login/Login';
 import Register from '../Register/Register';
 import Error from '../Error/Error';
 import useCurrentChunkSize from '../../utils/hooks/useCurrentChunkSize';
+import useMoreCount from '../../utils/hooks/useMoreCount';
 import { SHORT_MOVIE_LENGTH } from '../../utils/constants';
 
 import { getAllMovies, BASE_URL } from '../../utils/MoviesApi';
@@ -54,11 +55,12 @@ function App() {
   const [tumblerOn, setTumblerOn] = useState (false);
   const [serverError, setServerError] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
-  const [loggedIn, setLoggedIn ] = useState(false);
+  const [loggedIn, setLoggedIn ] = useState(null);
 
   //Забираю все фильмы из BeatFilm API
   const getMoviesForSearch = () => {
 
+    setLoading(true)
     getAllMovies()
       .then((res) => {
         const movies = res.map((card) => {
@@ -78,6 +80,7 @@ function App() {
         })
         localStorage.setItem("movies", JSON.stringify(movies));
       })
+      .then (() => setLoading(false))
         .catch((err) => {
             console.log(err)
         });
@@ -91,8 +94,13 @@ function App() {
   }
 
   const pullLatestUserSavedsMovies = () => {
+    setLoading(true)
     getSavedMovies()
-      .then((res) => setSavedMovies(getUserSavedMovies(res)))
+      .then((res) => {
+          setSavedMovies(getUserSavedMovies(res));
+          setLoading(false);
+          }
+        )
         .catch((err) => {
           console.log(err); 
           if (err === 401) {
@@ -101,7 +109,7 @@ function App() {
         } 
         )
   }
-  
+
   useEffect (() => {
 
     if (localStorage.getItem("message")) {
@@ -110,29 +118,33 @@ function App() {
       // console.log(`${currentUser} при проверке токена`)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [history]);
+
+  useEffect (() => {
+
+    if (!localStorage.getItem("message")) {
+      setLoggedIn(false);
+    }
+  }, [history]);
 
   useEffect (() => {
    
   if (serverError !== null) {
-    
+
     setServerError(null);
-    console.log('Обнуляю ошибку')
+    // console.log('Обнуляю ошибку')
     }
 
   }, [location]);
 
   useEffect (() => {
-
-    if (localStorage.getItem("message") && !localStorage.getItem("movies")) {
-      setLoading(true)
-      getMoviesForSearch()
-      .then(() => setLoading(false))
-        .catch((err) => console.log(err)
-        )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+   
+    if (localStorage.getItem("message")) {
+  
+      setLoggedIn(true);
+      }
+  
+    }, []);
 
   useEffect (() => {
 
@@ -187,15 +199,35 @@ function App() {
 
   let chunkSize = useCurrentChunkSize();
 
-  //функция, чтобы разбить на массив фильмов на чанки 
-  const getChunks = (data, chunkSize) => {
+  let moreCount = useMoreCount();
 
-    const dataChunks = []
+  // //функция, чтобы разбить на массив фильмов на чанки 
+  // const getChunks = (data, chunkSize) => {
 
-    for (let i = 0; i < data.length; i+= chunkSize) {
-      const chunk = data.slice(i, i + chunkSize)
-      dataChunks.push(chunk);
+  //   const dataChunks = []
+
+  //   for (let i = 0; i < data.length; i+= chunkSize) {
+  //     const chunk = data.slice(i, i + chunkSize)
+  //     dataChunks.push(chunk);
+  //   }
+  //   return dataChunks;
+  // }
+
+  //функция, чтобы разбить массив фильмов на чанки (первый чанк + Кнопка Еще)
+  const getChunks = (data, chunkSize, moreCount) => {
+
+    let moreDataChunks = []
+
+    let initialChunk = new Array (data.slice(0, chunkSize))
+    let moreData = data.slice(chunkSize)
+
+    for (let i = 0; i < (data.length - chunkSize); i+= moreCount) {
+      const chunk = moreData.slice(i, i + moreCount)
+      moreDataChunks.push(chunk);
     }
+
+    const dataChunks = initialChunk.concat(moreDataChunks);
+
     return dataChunks;
   }
 
@@ -239,7 +271,7 @@ function App() {
       setTumblerOn(false);
       localStorage.removeItem("tumblerOn");
       setMoviesToShow(allMoviesToShow);
-      console.log(allMoviesToShow);
+      // console.log(allMoviesToShow);
     }
   }
 
@@ -257,8 +289,12 @@ function App() {
   }
 
   useEffect (() => {
+
     if (localStorage.getItem("message")) {
-    
+
+      if (!localStorage.getItem("movies")) {
+        getMoviesForSearch()
+      } else {
       const allMovies = JSON.parse(localStorage.getItem("movies"));
 
       const filteredMovies = filterMovies(allMovies, searchQuery);
@@ -271,7 +307,7 @@ function App() {
         setTumblerOn(false);
         } else if (searchQuery !=='' && filteredMovies.length !== 0 && !localStorage.getItem("tumblerOn")) {
           setSearchResultsShown(true);
-          let moviesInChunks = getChunks(filteredMovies, chunkSize);
+          let moviesInChunks = getChunks(filteredMovies, chunkSize, moreCount);
           setFilteredMoviesInChunks(moviesInChunks);
           setNumberOfChunks(moviesInChunks.length);
           setMoviesToShow(moviesInChunks[0]);
@@ -286,6 +322,7 @@ function App() {
                 setMoviesToShow(shortMoviesToShow);
                 setMoreButtonHidden(true);
               }
+      }
       }
 }, [searchQuery, chunkSize, location, history]);
 
@@ -349,9 +386,9 @@ const hideShowMoreMovies = () => {
         setCurrentUser(res.user);
         setLoggedIn(true);
         setServerError(null);
-        getMoviesForSearch();
-        history.push('/movies');
-      }).catch (
+        history.push('/movies')
+    })
+      .catch (
         ((err) => {
         setServerError(err.message);
         })
@@ -391,24 +428,6 @@ const hideShowMoreMovies = () => {
           }
         })   
    }
-  //  updateUserData(name, email)
-  //   // .then((user) => {
-  //   //   setCurrentUser(user => ({...user, name, email }));
-  //   //   setServerError('Данные обновлены');
-  //   //     })
-  //   .then((user) => setCurrentUser(user => ({...user, name, email })))
-  //     .then(() => setServerError('Данные обновлены'))
-  //       // .catch(
-  //       //   ((err) => {
-  //       //     setServerError(err.message);
-  //       //     })
-  //       // )
-  //       .catch((err) => {
-  //         setServerError(err.message);
-  //         if (err = 401) {
-  //           unauthorizedSignOut();
-  //         }
-  //       })   
 }
 
   const onSignOut = () => {
@@ -455,31 +474,30 @@ const hideShowMoreMovies = () => {
   }
 
   const handleSaveMovie = ({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image}) => {
-    // console.log(savedMovies)
-    // console.log(getSavedMovies().then((res) => console.log(res)))
-    // console.log(`Вывожу ${currentUser._id} при сохранении фильма`)
+  
     saveMovie({movieId, country, director, duration, year, description, trailer, nameRU, nameEN, thumbnail, image})
-     .then(() => pullLatestUserSavedsMovies())
+      .then((res) => setSavedMovies([...savedMovies, res.movie]))
       .catch((err) => {
         console.log(err, "Ошибка сохранения фильма");
         if (err = 401) {
           unauthorizedSignOut();
         }
       })   
-    //  .catch(err => console.log(`Oшибка ${err} при сохранении фильма ${currentUser._id}`));
   }
 
   const handleDeleteMovie = (movie) => {
-    // console.log(`Вывожу ${currentUser._id} при удалении из сохраненных`)
     removeFromSavedMovies(movie._id)
-      .then(() => pullLatestUserSavedsMovies())
+      .then((res) => {
+          let savedMoviesOnDelete = savedMovies.filter((movie) => movie.movieId !== res.movie.movieId );
+          // console.log(savedMoviesOnDelete)
+          setSavedMovies(savedMoviesOnDelete);
+      })
         .catch((err) => {
           console.log(err, "Ошибка удаления фильма");
           if (err = 401) {
             unauthorizedSignOut();
           }
         })
-        // console.log(err))
   }
 
   return (
@@ -557,27 +575,9 @@ const hideShowMoreMovies = () => {
               />
             )}
           />
-          <Route path="/signin">
-            <Login
-              onLogin={handleLogin}
-              serverError={serverError}
-            />
-          </Route>
-          <Route path="/signup">
-            <Register 
-              onRegister={handleRegister}
-              serverError={serverError}
-            />
-          </Route>
           <Route path="*">
             <Error />
           </Route>
-          {/* <ProtectedRoute 
-            path="*"
-            loggedIn={loggedIn}
-          >
-            <Error />
-          </ProtectedRoute> */}
         </Switch>
         {location.pathname !=='/signin' && location.pathname !=='/signup' && <Footer/> }
       </div>

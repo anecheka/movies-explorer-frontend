@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './MoviesCard.css';
 
@@ -7,12 +7,16 @@ function MoviesCard({ card, onSaveMovie, onDeleteMovie, isInAllMovies, savedMovi
   const currentUser = useContext(CurrentUserContext);
   const isSaved = savedMoviesData.some(i => i.movieId === card.movieId);
 
+  // console.log(card.movieId);
+  // console.log(savedMoviesData);
+  // console.log(savedMoviesData.some(i => i.movieId === card.movieId))
+
   const saveClassName =
   `movies-card__save ${isSaved ? 'movies-card__save_saved' : ''}`;
 
   const handleClickLike = () => {
 
-    if (currentUser && isSaved === true) {
+    if (currentUser && isSaved) {
       onDeleteMovie(savedMoviesData.find(i => i.movieId === card.movieId && i.owner === currentUser._id))
       } else {
       onSaveMovie(card)

@@ -30,28 +30,27 @@ function MoviesCardList({
     mainTitle = `Ничего не найдено`
   }
 
-  // console.log(isInAllMovies)
-  // console.log(searchQuery !=='')
-  // console.log (moviesData.length)
+  // console.log(savedMoviesData);
 
   return (
     <section className="movies-card-list">
-      <h2 className={hideNoSearchQueryTitle}>{mainTitle}</h2>
-        <ul className={hideSearchList}>
-            { loading && <Preloader />}
-            { !loading && 
-              moviesData.map((card) => 
-                    <MoviesCard
-                        key={card.movieId} 
-                        card={card}
-                        onSaveMovie={onSaveMovie}
-                        onDeleteMovie={onDeleteMovie}
-                        isInAllMovies={isInAllMovies}
-                        savedMoviesData={savedMoviesData}
-                    />
-                )
-            }
-        </ul>
+      { loading && <Preloader /> }
+      { !loading && <>
+         <h2 className={hideNoSearchQueryTitle}>{mainTitle}</h2>
+         <ul className={hideSearchList}>
+           { moviesData.map((card) => 
+                 <MoviesCard
+                     key={card.movieId} 
+                     card={card}
+                     onSaveMovie={onSaveMovie}
+                     onDeleteMovie={onDeleteMovie}
+                     isInAllMovies={isInAllMovies}
+                     savedMoviesData={savedMoviesData}
+                 />
+           )}
+         </ul>
+      </>
+      }
       <button onClick={handleShowMoreMovies} className={hideShowMoreButtonClassName}>Ещё</button>
     </section>
   );

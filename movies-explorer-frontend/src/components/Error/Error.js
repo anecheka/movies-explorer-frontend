@@ -4,7 +4,7 @@ import './Error.css';
 
 function Error() {
 
-  let history = useHistory(); 
+  let history = useHistory();
 
   return (
     <main className="error">

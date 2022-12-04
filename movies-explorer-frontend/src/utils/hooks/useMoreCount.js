@@ -2,27 +2,27 @@ import { useEffect, useState } from 'react';
 import { 
           TABLET_BREAKPOINT, 
           MOBILE_BREAKPOINT, 
-          DESKTOP_MOVIES_COUNT, 
-          TABLET_MOVIES_COUNT, 
-          MOBILE_MOVIES_COUNT,
+          DESKTOP_MORE_COUNT,
+          TABLET_MORE_COUNT,
+          MOBILE_MORE_COUNT
        } from '../constants';
 
-const getChunkSize = () => {
+const getMoreCount = () => {
    // eslint-disable-next-line no-unused-vars
-  let chunkSize
+  let moreCount
 
   if (window.innerWidth >= TABLET_BREAKPOINT) {
-    return chunkSize = DESKTOP_MOVIES_COUNT
+    return moreCount = DESKTOP_MORE_COUNT
   } else if (window.innerWidth < TABLET_BREAKPOINT && window.innerWidth >=MOBILE_BREAKPOINT){
-    return chunkSize = TABLET_MOVIES_COUNT
+    return moreCount = TABLET_MORE_COUNT
   } else {
-    return chunkSize = MOBILE_MOVIES_COUNT
+    return moreCount = MOBILE_MORE_COUNT
   }
 }
 
-export default function useCurrentChunkSize () {
+export default function useMoreCount () {
 
-  let [chunkSize, setChunkSize] = useState(getChunkSize());
+  let [moreCount, setMoreCount] = useState(getMoreCount());
 
   useEffect(() => {
 
@@ -30,7 +30,7 @@ export default function useCurrentChunkSize () {
 
     const resizeListener = () => {
       clearTimeout(timeout);
-      timeout = setTimeout(() => setChunkSize(getChunkSize()), 150);
+      timeout = setTimeout(() => setMoreCount(getMoreCount()), 150);
     };
     window.addEventListener('resize', resizeListener);
     return () => {
@@ -38,5 +38,5 @@ export default function useCurrentChunkSize () {
     }
   }, [])
 
-  return chunkSize;
+  return moreCount;
 }
