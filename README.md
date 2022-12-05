@@ -18,4 +18,6 @@ HTML, CSS, JS, React
 
 [Ссылка на сгенерированный макет](https://practicum.yandex.ru/learn/web/courses/347389fe-50f8-4223-937b-d478373f38bf/sprints/5242/topics/97cc89f9-d314-4720-ab34-eae819224906/lessons/937a9cf4-b360-4057-a505-6c12c7e50b98/)
 
-[Ссылка на проект](https://cinematheque.nomoredomains.work/)
+[Ссылка на проект](https://cinematheque.nomorepartiesxyz.ru/)
+
+[Ссылка на pull request](https://github.com/anecheka/movies-explorer-frontend/pull/2)

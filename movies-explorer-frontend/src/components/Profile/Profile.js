@@ -1,51 +1,98 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import './Profile.css';
 import Form from '../Form/Form';
 import '../Form/Form.css';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { useFormWithValidation } from '../../utils/hooks/useFormWithValidation';
 
-function Profile() {
+function Profile( {onEditProfile, onSignOut, serverError}) {
 
- const [editMode, setEditMode] = React.useState(false);
+ const currentUser = React.useContext(CurrentUserContext);
 
- function handleEditClick () {
-        setEditMode(true);
- }
+ const { 
+    values, 
+    handleChange, 
+    errors, 
+    isValid, 
+    } 
 
- const buttonSubmitClassName = [
-     "profile__button",
-     !editMode && "profile__button_hidden"
- ].join(" ");
- 
- const buttonEditClassName = [
-    "profile__edit-link",
-    editMode && "profile__edit-link_hidden"
- ].join(" ");
+= useFormWithValidation();
 
+function handleSubmit(e) {
+
+    e.preventDefault();
+    const { name, email } = values;
+
+    if (!values.email) {
+        onEditProfile ({
+            name,
+            email: currentUser.email,
+        })
+        } else if (!values.name) {
+            onEditProfile ({
+                name: currentUser.name,
+                email,
+            });
+            }  else {
+                onEditProfile ({
+                    name,
+                    email,
+                });
+        }
+}
 
   return (
     <main className="profile">
         <Form 
-            title="Привет, Виталий!"
+            title={`Привет, ${currentUser.name}!`}
             name='edit-profile'
             button='Сохранить'
-            buttonClassName={buttonSubmitClassName}
+            buttonClassName="profile__button"
+            disabled={!isValid}
             titleClassName="profile__title"
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
+            errorMessage={serverError}
             >
             <p className="form__input form__input_no-border">
                 <label className="form__input-copy form__input-label" htmlFor="name">Имя</label>
-                <input className="form__input-copy form__input-field" type="text" defaultValue="Виталий" /*onChange={handleChangeName}*/ name="name" id="name" minLength="2" maxLength="40" required />
+                <input className="form__input-copy form__input-field" 
+                    type="text" 
+                    value={values.name || currentUser.name}
+                    onChange={handleChange} 
+                    name="name" 
+                    id="name" 
+                    minLength="2" 
+                    maxLength="40"
+                    pattern="[A-Za-zА-Яа-яЁё\s\-]{1,}"
+                    />
            </p>
-           <span className="form__input-error-message"></span>
+           {errors.name && <span className="form__input-error-message">
+           {
+                    errors.name==="Введите данные в указанном формате." ? 
+                    "Имя должно содержать только кириллицу, латиницу, пробел и дефис." : errors.name
+                }
+            </span>}
             <p className="form__input form__input_no-border">
                 <label className="form__input-copy form__input-label" htmlFor="email">E-mail</label>
-                <input className="form__input-copy form__input-field" type="email" defaultValue="pochta@yandex.ru" /*onChange={handleChangeDescription}*/ name="email" id="email" minLength="2" required />
-            </p>
-            <span className="form__input-error-message"></span>
+                <input className="form__input-copy form__input-field" 
+                    type="email" 
+                    value={values.email || currentUser.email} 
+                    onChange={handleChange}
+                    name="email" 
+                    id="email" 
+                    minLength="2"
+                    pattern="^(\D)+(\w)*((\.(\w)+)?)+@(\D)+(\w)*((\.(\D)+(\w)*)+)?(\.)[a-z]{2,}$"
+                    />
+               </p>
+            {errors.email && <span className="form__input-error-message">
+                {
+                        errors.email==="Введите данные в указанном формате." ? 
+                        "Проверьте правильность написания E-mail." : errors.email
+                    }
+
+                </span>}
         </Form>
-        <button className={buttonEditClassName} onClick={handleEditClick}>Редактировать</button>
-        <Link to="/" className="profile__sign-out">Выйти из аккаунта</Link>
+        <button className="profile__sign-out" onClick={onSignOut}>Выйти из аккаунта</button>
     </main>
   );
 }

@@ -1,28 +1,52 @@
-import React from 'react';
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import TumblerMovies from '../TumblerMovies/TumblerMovies';
-import Preloader from '../Preloader/Preloader';
-import mockData from '../../utils/mock-data.json';
 
-function Movies() {
-
-  const [loading, setLoading] = React.useState(false);
-
-  //написать функцию useEffect для прелоудера 
+function SavedMovies({
+  searchQuery,
+  searchSavedQuery,
+  setSearchSavedQuery, 
+  handleShowMoreMovies, 
+  moreButtonHidden, 
+  searchResultsShown, 
+  loading, 
+  tumblerOn, 
+  handleShowShortMovies, 
+  onSaveMovie, 
+  isInAllMovies, 
+  moviesData,
+  savedMoviesData,
+  onDeleteMovie, 
+  handleShowShortSavedMovies,
+  }) {
 
   return (
     <main className="movies">
-        <SearchForm />
-        <TumblerMovies />
-        { 
-        loading && <Preloader />
-        }
+         <SearchForm
+          searchSavedQuery={searchSavedQuery}
+          setSearchSavedQuery={setSearchSavedQuery}
+        />
+        <TumblerMovies 
+          tumblerOn={tumblerOn}
+          handleShowShortSavedMovies={handleShowShortSavedMovies}
+          handleShowShortMovies={handleShowShortMovies}
+          isInAllMovies={isInAllMovies}
+        />
         <MoviesCardList 
-            moviesData={mockData}
-            isLoggedIn={true}/>
+            loading={loading}
+            searchQuery={searchQuery}
+            searchSavedQuery={searchSavedQuery}
+            moviesData={moviesData}
+            savedMoviesData={savedMoviesData}
+            handleShowMoreMovies={handleShowMoreMovies}
+            moreButtonHidden={moreButtonHidden}
+            searchResultsShown={searchResultsShown}
+            onSaveMovie={onSaveMovie}
+            isInAllMovies={isInAllMovies}
+            onDeleteMovie={onDeleteMovie}
+          />
     </main>
   );
 }
 
-export default Movies;
+export default SavedMovies;

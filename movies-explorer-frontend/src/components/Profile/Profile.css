@@ -41,12 +41,21 @@
 }
 
 .profile__sign-out {
+    border: none;
+    outline: none;
+    background-color: #fff;
+    height: 20px;
     color: #FF4062;
     font-size: 13px;
     line-height: 16px;
     font-weight: 500;
     text-decoration: none;
     padding-bottom: 70px;
+}
+
+.profile__sign-out:hover {
+    opacity: .8;
+    cursor: pointer;
 }
 
 .profile__button {

@@ -77,12 +77,12 @@
     cursor: pointer;
 }
 
-.form__submit-button_disabled {
+.form__submit-button:disabled {
     background-color: #F8F8F8;
     color: #C2C2C2;
 } 
 
-.form__submit-button_disabled:hover {
+.form__submit-button:disabled:hover {
     cursor: default;
     opacity: 1;
 } 
@@ -184,9 +184,22 @@
 }
 
 .form__input-error-message {
-    width: 410px;
+    display: inline-block;
+    width: 396px;
     grid-area: error;
     font-size: 10px;
     line-height: 12px;
+    color: #FF4062;
+}
+
+@media (max-width: 480px) {
+    .form__input-error-message {
+        width: 100%;
+    }
+}
+
+.form__server-error {
+    font-size: 18px;
+    line-height: 22px;
     color: #FF4062;
 }
